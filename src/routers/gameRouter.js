@@ -1,7 +1,17 @@
 const express = require('express');
 const gameModule = require('../modules/gameModule');
+const authModule = require('../modules/authModule');
 
 const router = express.Router();
+
+// Authentication middleware
+router.use(async (req, res, next) => {
+    if (authModule.authenticateUser(req)) {
+        next();
+    } else {
+        res.status(401).send('Invalid credentials');
+    }
+});
 
 // Create new game
 router.post('/', async (req, res) => {
