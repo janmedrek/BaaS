@@ -11,12 +11,14 @@ router.use(async (req, res, next) => {
             if (!result) {
                 res.status(401).send('Invalid credentials');
             } else {
+                req.headers.user = result;
                 next();
             }
         });
 });
 
 // Create new game
+// TODO: Determine if this is really needed - may be called only from inside of the server
 router.post('/', async (req, res) => {
     const gameId = gameModule.addGame();
     res.status(201).send(gameId);
@@ -25,17 +27,30 @@ router.post('/', async (req, res) => {
 // Get game state
 router.get('/:gameId', async (req, res) => {
     const game = gameModule.getGame(req.params.gameId);
-    res.status(200).send(game);
+
+    if (game.currentPlayer === req.headers.user) {
+        // Okey, play now. Your move!
+        res.status(200).send(game);
+    } else if (game.players.indexOf(req.headers.user) > -1) {
+        // Hey, get off! The other player has not finished their move yet!
+        res.status(202).send(game);
+    } else {
+        // What are you doing here? You're not a part of this game...
+        res.status(403).send();
+    }
 });
 
 // Update game state
 router.put('/:gameId', async (req, res) => {
-    const result = gameModule.updateGameState(req.params.gameId, req.body);
+    const game = gameModule.getGame(req.params.gameId);
 
-    if (result) {
+    if (game.currentPlayer === req.headers.user) {
+        // Okey, let me save new state you've sent.
+        gameModule.updateGameState(req.params.gameId, req.body);
         res.status(200).send();
     } else {
-        res.status(500).send();
+        // Not your move!
+        res.status(403).send();
     }
 });
 

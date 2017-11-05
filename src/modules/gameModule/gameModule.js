@@ -11,8 +11,12 @@ gameModule.addGame = (playersData) => {
 
     gameModule.memDB.games.push({
         uuid: gameId,
+
         players: playersData,
-        state: {},
+        currentPlayer: playersData[0],
+
+        gameState: 'waiting',
+        boardState: {},
         statistics: {},
     });
 
@@ -20,7 +24,7 @@ gameModule.addGame = (playersData) => {
 };
 
 gameModule.getGame = (gameId) => {
-    // returns true if ids match
+    // Returns true if ids match
     const findById = currentGame => currentGame.uuid === gameId;
 
     return gameModule.memDB.games.find(findById);
@@ -35,6 +39,14 @@ gameModule.updateGameState = (gameId, state) => {
     }
 
     game.state = state;
+
+    // TODO:change current player
+    const index = game.players.indexOf(game.currentPlayer);
+    if (index >= 0 && index < game.players.length - 1) {
+        game.currentPlayer = game.players[index + 1];
+    } else {
+        game.currentPlayer = game.players[0];
+    }
     return true;
 };
 

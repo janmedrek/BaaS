@@ -19,7 +19,7 @@ authModule.authenticateUser = async (req) => {
 
     // User exists, check passwords match
     if (userData.passwordHash === md5(`${credentials[1]}${userData.passwordSalt}`)) {
-        return true;
+        return credentials[0];
     }
     return false;
 };
