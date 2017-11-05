@@ -4,6 +4,12 @@ const md5 = require('md5');
 
 const authModule = {};
 
+/**
+ * Authenticates user through basic auth
+ * @param {object} req - http request with Authorization header
+ * @returns {bool} false on failed authentication
+ * @returns {string} username on successful authentication
+ */
 authModule.authenticateUser = async (req) => {
     // Decode basic auth credentials
     const message = req.headers.authorization;

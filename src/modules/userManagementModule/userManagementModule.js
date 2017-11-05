@@ -3,6 +3,15 @@ const md5 = require('md5');
 
 const userManagementModule = {};
 
+/**
+ * Registers user in database
+ * @param {string} username
+ * @param {string} password
+ *
+ * @returns {object} Created user
+ *
+ * @throws {object} Error on username conflict
+ */
 userManagementModule.registerUser = async (username, password) => {
     // Check whether username is unique or not
     const data = await datastoreFacade.getUser(username);

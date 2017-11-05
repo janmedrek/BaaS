@@ -6,6 +6,11 @@ gameModule.memDB = {
     games: [],
 };
 
+/**
+ * Creates game
+ * @param {array} playersData - array containing player names
+ * @returns {string} ID of a game that was created
+ */
 gameModule.addGame = (playersData) => {
     const gameId = uuidv4();
 
@@ -23,6 +28,11 @@ gameModule.addGame = (playersData) => {
     return gameId;
 };
 
+/**
+ * Fetches game with given ID
+ * @param {string} gameId - ID of a game to find
+ * @returns {object} game object
+ */
 gameModule.getGame = (gameId) => {
     // Returns true if ids match
     const findById = currentGame => currentGame.uuid === gameId;
@@ -30,6 +40,13 @@ gameModule.getGame = (gameId) => {
     return gameModule.memDB.games.find(findById);
 };
 
+/**
+ * Updates game state
+ * @param {string} gameId
+ * @param {object} state
+ * @returns {bool} information on success / failure
+ * TODO: Update statistics in here
+ */
 gameModule.updateGameState = (gameId, state) => {
     const findById = currentGame => currentGame.uuid === gameId;
 
@@ -40,7 +57,7 @@ gameModule.updateGameState = (gameId, state) => {
 
     game.state = state;
 
-    // TODO:change current player
+    // Change current player to the one that is next on the list
     const index = game.players.indexOf(game.currentPlayer);
     if (index >= 0 && index < game.players.length - 1) {
         game.currentPlayer = game.players[index + 1];

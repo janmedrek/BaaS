@@ -18,7 +18,8 @@ router.use(async (req, res, next) => {
 });
 
 // Create new game
-// TODO: Determine if this is really needed - may be called only from inside of the server
+// TODO: Determine if this is really needed - may be called only from inside of the server.
+//       In this case this route should be removed.
 router.post('/', async (req, res) => {
     const gameId = gameModule.addGame();
     res.status(201).send(gameId);
@@ -27,6 +28,10 @@ router.post('/', async (req, res) => {
 // Get game state
 router.get('/:gameId', async (req, res) => {
     const game = gameModule.getGame(req.params.gameId);
+    if (!game) {
+        res.status(404).send('Game not found');
+        return;
+    }
 
     if (game.currentPlayer === req.headers.user) {
         // Okey, play now. Your move!
@@ -45,7 +50,7 @@ router.put('/:gameId', async (req, res) => {
     const game = gameModule.getGame(req.params.gameId);
 
     if (game.currentPlayer === req.headers.user) {
-        // Okey, let me save new state you've sent.
+        // Okey, let me save new state that you've sent.
         gameModule.updateGameState(req.params.gameId, req.body);
         res.status(200).send();
     } else {
