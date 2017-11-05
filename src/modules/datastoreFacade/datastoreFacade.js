@@ -31,14 +31,6 @@ datastoreFacade.saveUser = async (username, hash, salt) => {
         return 'not enough values';
     }
 
-    // Check whether username is unique or not
-    const data = await datastoreFacade.getUser(username);
-    if (data) {
-        // User with that name already exists
-        // TODO: RETURN ERROR
-        return 'user exists';
-    }
-
     const key = datastore.key(['User', username]);
     const userData = {
         passwordHash: hash,

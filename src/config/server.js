@@ -11,7 +11,7 @@ function haltOnTimedout(req, res, next) {
     }
 }
 
-app.use(timeout(5000));
+app.use(timeout(10000));
 app.use(haltOnTimedout);
 
 app.use(bodyParser.json());
@@ -25,6 +25,7 @@ app.use((err, req, res, next) => {
 
 app.use('/', require('./index'));
 app.use('/games', require('../routers/gameRouter'));
+app.use('/openapi', require('../routers/openapiRouter'));
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
