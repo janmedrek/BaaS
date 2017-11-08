@@ -1,6 +1,7 @@
 const express = require('express');
 const gameModule = require('../modules/gameModule/gameModule');
 const authModule = require('../modules/authModule/authModule');
+const statisticsModule = require('../modules/statisticsModule/statisticsModule');
 
 const router = express.Router();
 
@@ -20,8 +21,9 @@ router.use(async (req, res, next) => {
 // Create new game
 // TODO: Determine if this is really needed - may be called only from inside of the server.
 //       In this case this route should be removed.
+// For testing purposes
 router.post('/', async (req, res) => {
-    const gameId = gameModule.addGame();
+    const gameId = gameModule.createGame();
     res.status(201).send(gameId);
 });
 
@@ -50,13 +52,25 @@ router.put('/:gameId', async (req, res) => {
     const game = gameModule.getGame(req.params.gameId);
 
     if (game.currentPlayer === req.headers.user) {
+        if (!req.body.state) {
+            res.send(400).send('No game state provided');
+            return;
+        }
         // Okey, let me save new state that you've sent.
-        gameModule.updateGameState(req.params.gameId, req.body);
+        gameModule.updateGameState(req.params.gameId, req.body.state);
+        // And statistics, obviously
+        statisticsModule.saveStatistics(req.params.gameId, req.body.statistics);
         res.status(200).send();
     } else {
         // Not your move!
         res.status(403).send();
     }
+});
+
+// Deletes game
+// This may be unnecessary though
+router.delete('/:gameId', async (req, res) => {
+
 });
 
 module.exports = router;

@@ -1,3 +1,4 @@
+// TODO: Error throwing
 const uuidv4 = require('uuid/v4');
 
 const gameModule = {};
@@ -11,14 +12,14 @@ gameModule.memDB = {
  * @param {array} playersData - array containing player names
  * @returns {string} ID of a game that was created
  */
-gameModule.addGame = (playersData) => {
+gameModule.createGame = (playersData) => {
     const gameId = uuidv4();
 
     gameModule.memDB.games.push({
         uuid: gameId,
 
         players: playersData,
-        currentPlayer: playersData[0],
+        currentPlayer: playersData[0].name,
 
         gameState: 'waiting',
         boardState: {},
@@ -45,7 +46,6 @@ gameModule.getGame = (gameId) => {
  * @param {string} gameId
  * @param {object} state
  * @returns {bool} information on success / failure
- * TODO: Update statistics in here
  */
 gameModule.updateGameState = (gameId, state) => {
     const findById = currentGame => currentGame.uuid === gameId;
@@ -60,9 +60,9 @@ gameModule.updateGameState = (gameId, state) => {
     // Change current player to the one that is next on the list
     const index = game.players.indexOf(game.currentPlayer);
     if (index >= 0 && index < game.players.length - 1) {
-        game.currentPlayer = game.players[index + 1];
+        game.currentPlayer = game.players[index + 1].name;
     } else {
-        game.currentPlayer = game.players[0];
+        game.currentPlayer = game.players[0].name;
     }
     return true;
 };
