@@ -23,7 +23,7 @@ router.use(async (req, res, next) => {
 //       In this case this route should be removed.
 // For testing purposes
 router.post('/', async (req, res) => {
-    const gameId = gameModule.createGame();
+    const gameId = gameModule.createGame([{ username: req.headers.user }]);
     res.status(201).send(gameId);
 });
 

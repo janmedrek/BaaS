@@ -83,12 +83,14 @@ lobbyModule.deleteLobby = (lobbyId) => {
     // Throw an error if lobby not found
     if (!toDelete) {
         const err = {
+            status: 404,
             message: 'Lobby not found',
         };
         throw err;
     } else {
-        const index = lobbyId.memDB.lobbies.indexOf(toDelete);
-        lobbyId.memDB.lobbies.splice(index, 1);
+        const index = lobbyModule.memDB.lobbies.indexOf(toDelete);
+
+        lobbyModule.memDB.lobbies.splice(index, 1);
         return true;
     }
 };
@@ -104,6 +106,7 @@ lobbyModule.startGame = (lobbyId) => {
 
     if (lobby.players.length !== 2) {
         const error = {
+            status: 400,
             message: 'not enough players',
         };
         throw error;
@@ -168,13 +171,19 @@ lobbyModule.removePlayerFromLobby = (playerInfo, lobbyId) => {
 
     if (!toDelete) {
         const err = {
+            status: 404,
             message: 'Player not found',
         };
-
         throw err;
     } else {
         const index = lobby.players.indexOf(toDelete);
         lobby.players.splice(index, 1);
+
+        // If there are no players in the lobby it should be deleted
+        if (lobby.players.length === 0) {
+            lobbyModule.deleteLobby(lobbyId);
+        }
+
         return true;
     }
 };

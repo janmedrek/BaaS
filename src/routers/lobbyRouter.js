@@ -25,7 +25,8 @@ router.post('/', async (req, res) => {
     }
 
     if (req.body.password) {
-        const lobbyId = lobbyModule.createSecureLobby({ username: req.headers.user });
+        const password = req.body.password;
+        const lobbyId = lobbyModule.createSecureLobby({ username: req.headers.user }, password);
         res.status(201).send(lobbyId);
     } else {
         const lobbyId = lobbyModule.createLobby({ username: req.headers.user });
@@ -57,9 +58,10 @@ router.post('/:lobbyId/startGame', async (req, res) => {
 // Add a player to the lobby
 router.post('/:lobbyId/players', async (req, res) => {
     const password = req.body.password;
+    const lobbyId = req.params.lobbyId;
 
     try {
-        lobbyModule.addPlayerToTheLobby({ username: req.headers.user }, req.params.lobbyId, password);
+        lobbyModule.addPlayerToLobby({ username: req.headers.user }, lobbyId, password);
         res.status(200).send();
     } catch (err) {
         res.status(err.staus).send(err.message);
@@ -68,7 +70,14 @@ router.post('/:lobbyId/players', async (req, res) => {
 
 // Remove a player from the lobby
 router.delete('/:lobbyId/players', async (req, res) => {
+    const lobbyId = req.params.lobbyId;
 
+    try {
+        lobbyModule.removePlayerFromLobby({ username: req.headers.user }, lobbyId);
+        res.status(200).send();
+    } catch (err) {
+        res.status(err.status).send(err.message);
+    }
 });
 
 module.exports = router;
