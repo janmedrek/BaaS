@@ -113,6 +113,7 @@ lobbyModule.startGame = (lobbyId) => {
     } else {
         const gameId = gameModule.createGame();
         lobby.state = 'TERMINATING';
+        lobby.game = gameId;
         return gameId;
     }
 };

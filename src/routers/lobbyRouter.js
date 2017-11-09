@@ -46,13 +46,28 @@ router.get('/:lobbyId', async (req, res) => {
     if (!lobby) {
         res.status(404).send('Lobby not found');
     } else {
+        // If lobby is terminating - remove player from it and send them game id
+        if (lobby.status === 'TERMINATING') {
+            res.status(202).send(lobby.gameId);
+            lobbyModule.removePlayerFromLobby({ username: req.headers.user }, lobby.uuid);
+            return;
+        }
         res.status(200).send(lobby);
     }
 });
 
 // Start game
 router.post('/:lobbyId/startGame', async (req, res) => {
+    const lobbyId = req.params.lobbyId;
 
+    try {
+        const gameId = lobbyModule.startGame(lobbyId);
+        res.status(201).send(gameId);
+
+        lobbyModule.removePlayerFromLobby({ username: req.headers.user }, lobbyId);
+    } catch (err) {
+        res.status(err.status).send(err.message);
+    }
 });
 
 // Add a player to the lobby
