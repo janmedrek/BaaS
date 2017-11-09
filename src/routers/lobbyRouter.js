@@ -47,11 +47,20 @@ router.get('/:lobbyId', async (req, res) => {
         res.status(404).send('Lobby not found');
     } else {
         // If lobby is terminating - remove player from it and send them game id
-        // TODO: Check if player is in the lobby xD
         if (lobby.state === 'TERMINATING') {
-            res.status(202).send(lobby.gameId);
-            lobbyModule.removePlayerFromLobby({ username: req.headers.user }, lobby.uuid);
-            return;
+            // Check if player is member of the lobby
+            // Returns true if ids match
+            const playerUsername = req.headers.user;
+            const findByName = currentPlayer => currentPlayer.username === playerUsername;
+
+            const isPresent = lobby.players.find(findByName);
+
+            if (isPresent) {
+                res.status(202).send(lobby.gameId);
+                lobbyModule.removePlayerFromLobby({ username: req.headers.user }, lobby.uuid);
+                return;
+            }
+            res.status(401).send();
         }
         res.status(200).send(lobby);
     }
