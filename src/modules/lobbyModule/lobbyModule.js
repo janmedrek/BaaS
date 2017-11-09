@@ -101,7 +101,7 @@ lobbyModule.deleteLobby = (lobbyId) => {
  * @returns {string} uuid of game created for this lobby
  * @throws {object} error
  */
-lobbyModule.startGame = (lobbyId) => {
+lobbyModule.startGame = async (lobbyId) => {
     const lobby = lobbyModule.getLobby(lobbyId);
 
     if (lobby.players.length !== 2) {
@@ -111,9 +111,9 @@ lobbyModule.startGame = (lobbyId) => {
         };
         throw error;
     } else {
-        const gameId = gameModule.createGame();
+        const gameId = gameModule.createGame(lobby.players);
         lobby.state = 'TERMINATING';
-        lobby.game = gameId;
+        lobby.gameId = gameId;
         return gameId;
     }
 };

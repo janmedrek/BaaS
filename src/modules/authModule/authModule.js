@@ -13,6 +13,11 @@ const authModule = {};
 authModule.authenticateUser = async (req) => {
     // Decode basic auth credentials
     const message = req.headers.authorization;
+
+    if (!message) {
+        return false;
+    }
+
     const encodedCredentials = message.split(' ')[1];
     const credentials = base64.decode(encodedCredentials).split(':');
 

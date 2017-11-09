@@ -15,16 +15,19 @@ gameModule.memDB = {
 gameModule.createGame = (playersData) => {
     const gameId = uuidv4();
 
-    gameModule.memDB.games.push({
+    const game = {
         uuid: gameId,
-
-        players: playersData,
-        currentPlayer: playersData[0].username,
 
         gameState: 'waiting',
         boardState: {},
         statistics: {},
-    });
+    };
+
+    const players = playersData.slice();
+    game.players = players;
+    game.currentPlayer = players[0].username;
+
+    gameModule.memDB.games.push(game);
 
     return gameId;
 };
