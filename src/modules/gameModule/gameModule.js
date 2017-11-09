@@ -9,7 +9,7 @@ gameModule.memDB = {
 
 /**
  * Creates game
- * @param {array} playersData - array containing player names
+ * @param {array} playersData - array containing player objects
  * @returns {string} ID of a game that was created
  */
 gameModule.createGame = (playersData) => {
@@ -19,7 +19,7 @@ gameModule.createGame = (playersData) => {
         uuid: gameId,
 
         players: playersData,
-        currentPlayer: playersData[0].name,
+        currentPlayer: playersData[0].username,
 
         gameState: 'waiting',
         boardState: {},
@@ -60,11 +60,33 @@ gameModule.updateGameState = (gameId, state) => {
     // Change current player to the one that is next on the list
     const index = game.players.indexOf(game.currentPlayer);
     if (index >= 0 && index < game.players.length - 1) {
-        game.currentPlayer = game.players[index + 1].name;
+        game.currentPlayer = game.players[index + 1].username;
     } else {
-        game.currentPlayer = game.players[0].name;
+        game.currentPlayer = game.players[0].username;
     }
     return true;
+};
+
+/**
+ * Deletes game
+ * @param {string} gameId
+ * @returns {bool} information on success / failure
+ * @throws {object} error
+ */
+gameModule.deleteGame = (gameId) => {
+    const toDelete = gameModule.getGame(gameId);
+
+    // Throw an error if lobby not found
+    if (!toDelete) {
+        const err = {
+            message: 'Lobby not found',
+        };
+        throw err;
+    } else {
+        const index = gameModule.memDB.lobbies.indexOf(toDelete);
+        gameModule.memDB.lobbies.splice(index, 1);
+        return true;
+    }
 };
 
 module.exports = gameModule;

@@ -70,7 +70,12 @@ router.put('/:gameId', async (req, res) => {
 // Deletes game
 // This may be unnecessary though
 router.delete('/:gameId', async (req, res) => {
-
+    try {
+        gameModule.deleteGame(req.params.gameId);
+        res.status(200).send();
+    } catch (err) {
+        res.status(404).send('Game not found');
+    }
 });
 
 module.exports = router;

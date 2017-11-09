@@ -26,6 +26,7 @@ app.use((err, req, res, next) => {
 app.use('/', require('./index'));
 app.use('/games', require('../routers/gameRouter'));
 app.use('/openapi', require('../routers/openapiRouter'));
+app.use('/lobbies', require('../routers/lobbyRouter'));
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);

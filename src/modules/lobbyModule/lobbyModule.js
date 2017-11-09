@@ -8,6 +8,13 @@ lobbyModule.memDB = {
 };
 
 /**
+ * Returns all lobbies
+ * @returns {object} object containing list of lobbies
+ */
+// TODO: DO NOT RETURN PASSWORDS
+lobbyModule.getLobbies = () => lobbyModule.memDB;
+
+/**
  * Fetches lobby with given ID
  * @param {string} lobbyId - uuid of a lobby to find
  * @returns {object} lobby
@@ -78,7 +85,6 @@ lobbyModule.deleteLobby = (lobbyId) => {
         const err = {
             message: 'Lobby not found',
         };
-
         throw err;
     } else {
         const index = lobbyId.memDB.lobbies.indexOf(toDelete);
@@ -122,6 +128,7 @@ lobbyModule.addPlayerToLobby = (playerInfo, lobbyId, password) => {
     if (!lobby) {
         // No lobby found, throw an error
         const err = {
+            status: 404,
             message: 'Lobby not found',
         };
         throw err;
@@ -133,6 +140,7 @@ lobbyModule.addPlayerToLobby = (playerInfo, lobbyId, password) => {
         }
         // Passwords do not match, throw an error
         const err = {
+            status: 401,
             message: 'Wrong password',
         };
         throw err;
