@@ -11,8 +11,19 @@ lobbyModule.memDB = {
  * Returns all lobbies
  * @returns {object} object containing list of lobbies
  */
-// TODO: DO NOT RETURN PASSWORDS
-lobbyModule.getLobbies = () => lobbyModule.memDB;
+lobbyModule.getLobbies = () => {
+    const toReturn = lobbyModule.memDB.lobbies.map((lobby) => {
+        if (lobby.password) {
+            const toAdd = Object.assign({}, lobby);
+            delete toAdd.password;
+            return toAdd;
+        }
+        const toAdd = Object.assign({}, lobby);
+        return toAdd;
+    });
+
+    return toReturn;
+};
 
 /**
  * Fetches lobby with given ID
@@ -40,11 +51,14 @@ lobbyModule.getLobby = (lobbyId) => {
  * @param {string} playerInfo - info on the player that created the lobby
  * @returns {string} lobbyId
  */
+// TODO: Check if player is not present inside other lobby
 lobbyModule.createLobby = (playerInfo) => {
     const lobbyId = uuidv4();
 
     lobbyModule.memDB.lobbies.push({
         uuid: lobbyId,
+        type: 'unprotected',
+
         players: [playerInfo],
         state: 'WAIT',
     });
@@ -58,11 +72,14 @@ lobbyModule.createLobby = (playerInfo) => {
  * @param {string} password - password for the lobby
  * @returns {string} lobbyId
  */
+// TODO: Check if player is not present inside other lobby
 lobbyModule.createSecureLobby = (playerInfo, password) => {
     const lobbyId = uuidv4();
 
     lobbyModule.memDB.lobbies.push({
         uuid: lobbyId,
+        type: 'protected',
+
         password,
         players: [playerInfo],
         state: 'WAIT',
@@ -126,6 +143,7 @@ lobbyModule.startGame = async (lobbyId) => {
  * @returns {bool} information on success
  * @throws {object} error
  */
+// TODO: Check if player is not present inside other lobby
 lobbyModule.addPlayerToLobby = (playerInfo, lobbyId, password) => {
     const lobby = lobbyModule.getLobby(lobbyId);
 
