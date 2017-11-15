@@ -58,7 +58,7 @@ gameModule.updateGameState = (gameId, state) => {
         return false;
     }
 
-    game.state = state;
+    game.boardState = state;
 
     // Change current player to the one that is next on the list
     const index = game.players.indexOf(game.currentPlayer);

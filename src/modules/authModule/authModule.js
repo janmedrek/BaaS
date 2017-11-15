@@ -11,15 +11,29 @@ const authModule = {};
  * @returns {string} username on successful authentication
  */
 authModule.authenticateUser = async (req) => {
-    // Decode basic auth credentials
-    const message = req.headers.authorization;
-
-    if (!message) {
+    if (!req) {
         return false;
     }
 
+    if (!req.headers) {
+        return false;
+    }
+
+    if (!req.headers.authorization) {
+        return false;
+    }
+
+    // Decode basic auth credentials
+    const message = req.headers.authorization;
+
     const encodedCredentials = message.split(' ')[1];
-    const credentials = base64.decode(encodedCredentials).split(':');
+    let credentials;
+
+    try {
+        credentials = base64.decode(encodedCredentials).split(':');
+    } catch (err) {
+        return false;
+    }
 
     const userData = await datastoreFacade.getUser(credentials[0]);
 
