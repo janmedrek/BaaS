@@ -1,4 +1,3 @@
-// TODO: Error throwing
 const uuidv4 = require('uuid/v4');
 
 const gameModule = {};
@@ -48,14 +47,18 @@ gameModule.getGame = (gameId) => {
  * Updates game state
  * @param {string} gameId
  * @param {object} state
- * @returns {bool} information on success / failure
+ * @returns {object} updated game
+ * @throws {object} err
  */
 gameModule.updateGameState = (gameId, state) => {
-    const findById = currentGame => currentGame.uuid === gameId;
+    const game = gameModule.getGame(gameId);
 
-    const game = gameModule.memDB.games.find(findById);
     if (!game) {
-        return false;
+        const err = {
+            code: 404,
+            message: 'Game not found',
+        };
+        throw err;
     }
 
     game.boardState = state;
@@ -67,7 +70,7 @@ gameModule.updateGameState = (gameId, state) => {
     } else {
         game.currentPlayer = game.players[0].username;
     }
-    return true;
+    return game;
 };
 
 /**
@@ -79,15 +82,16 @@ gameModule.updateGameState = (gameId, state) => {
 gameModule.deleteGame = (gameId) => {
     const toDelete = gameModule.getGame(gameId);
 
-    // Throw an error if lobby not found
+    // Throw an error if game was not found
     if (!toDelete) {
         const err = {
-            message: 'Lobby not found',
+            code: 404,
+            message: 'Game not found',
         };
         throw err;
     } else {
-        const index = gameModule.memDB.lobbies.indexOf(toDelete);
-        gameModule.memDB.lobbies.splice(index, 1);
+        const index = gameModule.memDB.games.indexOf(toDelete);
+        gameModule.memDB.games.splice(index, 1);
         return true;
     }
 };
