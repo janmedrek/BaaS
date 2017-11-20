@@ -11,16 +11,26 @@ const userManagementModule = {};
  * @throws {object} Error on username conflict
  */
 userManagementModule.registerUser = async (username, password) => {
+    // Check if data is present
+    if (!username || !password) {
+        const error = {
+            code: 400,
+            message: 'Not enough information',
+        };
+
+        throw error;
+    }
     // Check whether username is unique or not
     const data = await datastoreFacade.getUser(username);
     if (data) {
         // User with that name already exists
         // TODO: RETURN ERROR
-        const err = {
-            message: 'user exists',
+        const error = {
+            code: 409,
+            message: 'User with that name already exists',
         };
 
-        throw err;
+        throw error;
     }
 
     const salt = Math.random().toString(36).substr(2, 15);

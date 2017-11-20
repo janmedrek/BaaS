@@ -4,7 +4,14 @@ const statisticsModule = {};
 
 statisticsModule.getStatistics = async username => datastoreFacade.getStatistics(username);
 
-statisticsModule.saveStatistics = async (username, statistics) =>
-    datastoreFacade.saveStatistics(username, statistics);
+statisticsModule.saveStatistics = async (username, statistics) => {
+    try {
+        const result = await datastoreFacade.saveStatistics(username, statistics);
+        return result;
+    } catch (err) {
+        throw err;
+    }
+};
+
 
 module.exports = statisticsModule;

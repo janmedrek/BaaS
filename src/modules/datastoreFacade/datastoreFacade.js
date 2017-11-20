@@ -62,7 +62,13 @@ datastoreFacade.getStatistics = async (username) => {
     if (res[0]) {
         return res[0].statistics;
     }
-    return false;
+
+    const error = {
+        code: 404,
+        message: 'Users statistics not found',
+    };
+
+    throw error;
 };
 
 /**
