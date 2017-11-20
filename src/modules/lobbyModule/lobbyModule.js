@@ -8,21 +8,70 @@ lobbyModule.memDB = {
 };
 
 /**
- * Returns all lobbies
- * @returns {object} object containing list of lobbies
+ * Creates lobby
+ * @param {string} playerInfo - info on the player that created the lobby
+ * @returns {string} lobbyId
+ * @throws {object} err
  */
-lobbyModule.getLobbies = () => {
-    const toReturn = lobbyModule.memDB.lobbies.map((lobby) => {
-        if (lobby.password) {
-            const toAdd = Object.assign({}, lobby);
-            delete toAdd.password;
-            return toAdd;
-        }
-        const toAdd = Object.assign({}, lobby);
-        return toAdd;
+// TODO: Check if player is not present inside other lobby
+lobbyModule.createLobby = (playerInfo) => {
+    if (!playerInfo) {
+        const error = {
+            code: 400,
+            message: 'No player info provided',
+        };
+        throw error;
+    }
+
+    const lobbyId = uuidv4();
+
+    lobbyModule.memDB.lobbies.push({
+        uuid: lobbyId,
+        type: 'unprotected',
+
+        players: [playerInfo],
+        state: 'WAIT',
     });
 
-    return toReturn;
+    return lobbyId;
+};
+
+/**
+ * Creates lobby with password
+ * @param {string} playerInfo - info on the player that created the lobby
+ * @param {string} password - password for the lobby
+ * @returns {string} lobbyId
+ */
+// TODO: Check if player is not present inside other lobby
+lobbyModule.createSecureLobby = (playerInfo, password) => {
+    if (!playerInfo) {
+        const error = {
+            code: 400,
+            message: 'No player info provided',
+        };
+        throw error;
+    }
+
+    if (!password) {
+        const error = {
+            code: 400,
+            message: 'No password provided',
+        };
+        throw error;
+    }
+
+    const lobbyId = uuidv4();
+
+    lobbyModule.memDB.lobbies.push({
+        uuid: lobbyId,
+        type: 'protected',
+
+        password,
+        players: [playerInfo],
+        state: 'WAIT',
+    });
+
+    return lobbyId;
 };
 
 /**
@@ -47,45 +96,21 @@ lobbyModule.getLobby = (lobbyId) => {
 };
 
 /**
- * Creates lobby
- * @param {string} playerInfo - info on the player that created the lobby
- * @returns {string} lobbyId
+ * Returns all lobbies
+ * @returns {object} object containing list of lobbies
  */
-// TODO: Check if player is not present inside other lobby
-lobbyModule.createLobby = (playerInfo) => {
-    const lobbyId = uuidv4();
-
-    lobbyModule.memDB.lobbies.push({
-        uuid: lobbyId,
-        type: 'unprotected',
-
-        players: [playerInfo],
-        state: 'WAIT',
+lobbyModule.getLobbies = () => {
+    const toReturn = lobbyModule.memDB.lobbies.map((lobby) => {
+        if (lobby.password) {
+            const toAdd = Object.assign({}, lobby);
+            delete toAdd.password;
+            return toAdd;
+        }
+        const toAdd = Object.assign({}, lobby);
+        return toAdd;
     });
 
-    return lobbyId;
-};
-
-/**
- * Creates lobby with password
- * @param {string} playerInfo - info on the player that created the lobby
- * @param {string} password - password for the lobby
- * @returns {string} lobbyId
- */
-// TODO: Check if player is not present inside other lobby
-lobbyModule.createSecureLobby = (playerInfo, password) => {
-    const lobbyId = uuidv4();
-
-    lobbyModule.memDB.lobbies.push({
-        uuid: lobbyId,
-        type: 'protected',
-
-        password,
-        players: [playerInfo],
-        state: 'WAIT',
-    });
-
-    return lobbyId;
+    return toReturn;
 };
 
 /**
@@ -99,11 +124,11 @@ lobbyModule.deleteLobby = (lobbyId) => {
 
     // Throw an error if lobby not found
     if (!toDelete) {
-        const err = {
-            status: 404,
+        const error = {
+            code: 404,
             message: 'Lobby not found',
         };
-        throw err;
+        throw error;
     } else {
         const index = lobbyModule.memDB.lobbies.indexOf(toDelete);
 
@@ -120,11 +145,18 @@ lobbyModule.deleteLobby = (lobbyId) => {
  */
 lobbyModule.startGame = async (lobbyId) => {
     const lobby = lobbyModule.getLobby(lobbyId);
+    if (!lobby) {
+        const error = {
+            status: 404,
+            message: 'Lobby not found',
+        };
+        throw error;
+    }
 
     if (lobby.players.length !== 2) {
         const error = {
             status: 400,
-            message: 'not enough players',
+            message: 'Not enough players',
         };
         throw error;
     } else {
@@ -146,7 +178,6 @@ lobbyModule.startGame = async (lobbyId) => {
 // TODO: Check if player is not present inside other lobby
 lobbyModule.addPlayerToLobby = (playerInfo, lobbyId, password) => {
     const lobby = lobbyModule.getLobby(lobbyId);
-
     if (!lobby) {
         // No lobby found, throw an error
         const err = {
@@ -182,12 +213,19 @@ lobbyModule.addPlayerToLobby = (playerInfo, lobbyId, password) => {
  */
 lobbyModule.removePlayerFromLobby = (playerInfo, lobbyId) => {
     const lobby = lobbyModule.getLobby(lobbyId);
+    if (!lobby) {
+        const error = {
+            status: 404,
+            message: 'Lobby not found',
+        };
+        throw error;
+    }
 
+    // Find player
     // Returns true if ids match
     const findByName = currentPlayer => currentPlayer.username === playerInfo.username;
 
     const toDelete = lobby.players.find(findByName);
-
     if (!toDelete) {
         const err = {
             status: 404,

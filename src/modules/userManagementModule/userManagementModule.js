@@ -7,9 +7,7 @@ const userManagementModule = {};
  * Registers user in database
  * @param {string} username
  * @param {string} password
- *
  * @returns {object} Created user
- *
  * @throws {object} Error on username conflict
  */
 userManagementModule.registerUser = async (username, password) => {
