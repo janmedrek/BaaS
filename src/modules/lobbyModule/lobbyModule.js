@@ -143,11 +143,11 @@ lobbyModule.deleteLobby = (lobbyId) => {
  * @returns {string} uuid of game created for this lobby
  * @throws {object} error
  */
-lobbyModule.startGame = async (lobbyId) => {
+lobbyModule.startGame = (lobbyId) => {
     const lobby = lobbyModule.getLobby(lobbyId);
     if (!lobby) {
         const error = {
-            status: 404,
+            code: 404,
             message: 'Lobby not found',
         };
         throw error;
@@ -155,7 +155,7 @@ lobbyModule.startGame = async (lobbyId) => {
 
     if (lobby.players.length !== 2) {
         const error = {
-            status: 400,
+            code: 400,
             message: 'Not enough players',
         };
         throw error;
@@ -180,11 +180,11 @@ lobbyModule.addPlayerToLobby = (playerInfo, lobbyId, password) => {
     const lobby = lobbyModule.getLobby(lobbyId);
     if (!lobby) {
         // No lobby found, throw an error
-        const err = {
-            status: 404,
+        const error = {
+            code: 404,
             message: 'Lobby not found',
         };
-        throw err;
+        throw error;
     } else if (lobby.password) {
         if (lobby.password === password) {
             // Passwords do match, add a player to the lobby
@@ -192,11 +192,11 @@ lobbyModule.addPlayerToLobby = (playerInfo, lobbyId, password) => {
             return true;
         }
         // Passwords do not match, throw an error
-        const err = {
-            status: 401,
+        const error = {
+            code: 401,
             message: 'Wrong password',
         };
-        throw err;
+        throw error;
     } else {
         // No password needed, add a player to the lobby
         lobby.players.push(playerInfo);
@@ -215,7 +215,7 @@ lobbyModule.removePlayerFromLobby = (playerInfo, lobbyId) => {
     const lobby = lobbyModule.getLobby(lobbyId);
     if (!lobby) {
         const error = {
-            status: 404,
+            code: 404,
             message: 'Lobby not found',
         };
         throw error;
@@ -227,11 +227,11 @@ lobbyModule.removePlayerFromLobby = (playerInfo, lobbyId) => {
 
     const toDelete = lobby.players.find(findByName);
     if (!toDelete) {
-        const err = {
-            status: 404,
+        const error = {
+            code: 404,
             message: 'Player not found',
         };
-        throw err;
+        throw error;
     } else {
         const index = lobby.players.indexOf(toDelete);
         lobby.players.splice(index, 1);
