@@ -1,1 +1,6 @@
 .eslintrc.json
+package-lock.json
+
+node_modules/
+
+src/res/datastoreKey.json
