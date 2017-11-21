@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const timeout = require('connect-timeout');
 
 const app = express();
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 80;
 
 function haltOnTimedout(req, res, next) {
     if (!req.timedout) {
