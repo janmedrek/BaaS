@@ -34,14 +34,14 @@ statisticsModule.getStatistics = async username => datastoreFacade.getStatistics
 
 statisticsModule.saveStatistics = async (username, statistics) => {
     // TODO:
-    const result = await mergeStatistics({ lol: 1, lel: 2, lul: 3 }, { lol: 2, lil: 4, lulu: 3 });
-    console.log(result);
-    // try {
-    //     const result = await datastoreFacade.saveStatistics(username, statistics);
-    //     return result;
-    // } catch (err) {
-    //     throw err;
-    // }
+    // const result = await mergeStatistics({ lol: 1, lel: 2, lul: 3 }, { lol: 2, lil: 4, lulu: 3 });
+    // console.log(result);
+    try {
+        const result = await datastoreFacade.saveStatistics(username, statistics);
+        return result;
+    } catch (err) {
+        throw err;
+    }
 };
 
 module.exports = statisticsModule;
