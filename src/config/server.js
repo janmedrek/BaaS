@@ -2,8 +2,18 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const timeout = require('connect-timeout');
 
+const https = require('https');
+const fs = require('fs');
+
+const options = {
+    cert: fs.readFileSync('/etc/letsencrypt/live/skirmagame.com/fullchain.pem'),
+    key: fs.readFileSync('/etc/letsencrypt/live/skirmagame.com/privkey.pem'),
+};
+
 const app = express();
-const port = process.env.PORT || 80;
+
+// Port should be set to 80 / 443 on prod
+const port = process.env.PORT || 8080;
 
 function haltOnTimedout(req, res, next) {
     if (!req.timedout) {
@@ -11,9 +21,14 @@ function haltOnTimedout(req, res, next) {
     }
 }
 
+// Set the timeout
 app.use(timeout(10000));
 app.use(haltOnTimedout);
 
+// Helmet sets proper https headers
+// app.use(require('helmet')());
+
+// Parse JSONs
 app.use(bodyParser.json());
 app.use((err, req, res, next) => {
     if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
@@ -23,13 +38,19 @@ app.use((err, req, res, next) => {
     }
 });
 
+// Routers
 app.use('/', require('./index'));
+app.use('/auth', require('../routers/authRouter'));
 app.use('/games', require('../routers/gameRouter'));
 app.use('/openapi', require('../routers/openapiRouter'));
 app.use('/lobbies', require('../routers/lobbyRouter'));
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
+});
+
+https.createServer(options, app).listen(8443, () => {
+    console.log('Server is running at https://localhost:8443');
 });
 
 module.exports = app;
