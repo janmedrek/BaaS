@@ -13,7 +13,7 @@ const options = {
 const app = express();
 
 // Port should be set to 80 / 443 on prod
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 80;
 
 function haltOnTimedout(req, res, next) {
     if (!req.timedout) {
@@ -26,7 +26,7 @@ app.use(timeout(10000));
 app.use(haltOnTimedout);
 
 // Helmet sets proper https headers
-// app.use(require('helmet')());
+app.use(require('helmet')());
 
 // Parse JSONs
 app.use(bodyParser.json());
@@ -49,8 +49,8 @@ app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
 
-https.createServer(options, app).listen(8443, () => {
-    console.log('Server is running at https://localhost:8443');
+https.createServer(options, app).listen(443, () => {
+    console.log('Server is running at https://localhost:443');
 });
 
 module.exports = app;
