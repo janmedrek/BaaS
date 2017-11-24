@@ -36,7 +36,7 @@ router.post('/', async (req, res) => {
 
 // Get all lobbies
 router.get('/', async (req, res) => {
-    res.status(200).send(lobbyModule.getLobbies());
+    res.status(200).send({ lobbies: lobbyModule.getLobbies() });
 });
 
 // Get lobby info
