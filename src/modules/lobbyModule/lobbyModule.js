@@ -168,6 +168,20 @@ lobbyModule.startGame = (lobbyId) => {
 };
 
 /**
+ * Fetches lobby with given ID, retrieves password aswell, should not be used in routers
+ * @param {string} lobbyId - uuid of a lobby to find
+ * @returns {object} lobby
+ */
+lobbyModule.getLobbyInternal = (lobbyId) => {
+    // Returns true if ids match
+    const findById = currentLobby => currentLobby.uuid === lobbyId;
+
+    const res = lobbyModule.memDB.lobbies.find(findById);
+
+    return res;
+};
+
+/**
  * Registers player in the lobby
  * @param {object} playerInfo - information on the user
  * @param {string} lobbyId - id of the lobby to perform operation on
@@ -177,7 +191,7 @@ lobbyModule.startGame = (lobbyId) => {
  */
 // TODO: Check if player is not present inside other lobby
 lobbyModule.addPlayerToLobby = (playerInfo, lobbyId, password) => {
-    const lobby = lobbyModule.getLobby(lobbyId);
+    const lobby = lobbyModule.getLobbyInternal(lobbyId);
     if (!lobby) {
         // No lobby found, throw an error
         const error = {

@@ -89,7 +89,7 @@ router.post('/:lobbyId/players', async (req, res) => {
         lobbyModule.addPlayerToLobby({ username: req.headers.user }, lobbyId, password);
         res.status(200).send();
     } catch (err) {
-        res.status(err.staus).send(err.message);
+        res.status(err.code).send(err.message);
     }
 });
 
