@@ -2,18 +2,18 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const timeout = require('connect-timeout');
 
-const https = require('https');
-const fs = require('fs');
+// const https = require('https');
+// const fs = require('fs');
 
-const options = {
-    cert: fs.readFileSync('/etc/letsencrypt/live/skirmagame.com/fullchain.pem'),
-    key: fs.readFileSync('/etc/letsencrypt/live/skirmagame.com/privkey.pem'),
-};
+// const options = {
+//     cert: fs.readFileSync('/etc/letsencrypt/live/skirmagame.com/fullchain.pem'),
+//     key: fs.readFileSync('/etc/letsencrypt/live/skirmagame.com/privkey.pem'),
+// };
 
 const app = express();
 
 // Port should be set to 80 / 443 on prod
-const port = process.env.PORT || 80;
+const port = process.env.PORT || 8080;
 
 function haltOnTimedout(req, res, next) {
     if (!req.timedout) {
@@ -30,6 +30,10 @@ app.use(require('helmet')());
 
 // Parse JSONs
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true,
+}));
+
 app.use((err, req, res, next) => {
     if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
         res.status(err.status).send(err);
@@ -49,8 +53,8 @@ app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
 
-https.createServer(options, app).listen(443, () => {
-    console.log('Server is running at https://localhost:443');
-});
+// https.createServer(options, app).listen(443, () => {
+//     console.log('Server is running at https://localhost:443');
+// });
 
 module.exports = app;
