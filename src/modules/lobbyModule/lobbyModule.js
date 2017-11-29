@@ -29,7 +29,7 @@ lobbyModule.createLobby = (playerInfo) => {
         uuid: lobbyId,
         type: 'unprotected',
 
-        players: [playerInfo],
+        players: [],
         state: 'WAIT',
     });
 
@@ -67,7 +67,7 @@ lobbyModule.createSecureLobby = (playerInfo, password) => {
         type: 'protected',
 
         password,
-        players: [playerInfo],
+        players: [],
         state: 'WAIT',
     });
 
