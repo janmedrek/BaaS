@@ -35,9 +35,11 @@ router.get('/:gameId', async (req, res) => {
         return;
     }
 
-    if (game.currentPlayer === req.headers.user) {
+    if (game.players[game.currentPlayer].username === req.headers.user) {
         // Okey, play now. Your move!
         res.status(200).send(game);
+
+    // TODO: Update this, it will not work in current state
     } else if (game.players.indexOf(req.headers.user) > -1) {
         // Hey, get off! The other player has not finished their move yet!
         res.status(202).send(game);
