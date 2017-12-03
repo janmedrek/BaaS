@@ -38,14 +38,20 @@ router.get('/:gameId', async (req, res) => {
     if (game.players[game.currentPlayer].username === req.headers.user) {
         // Okey, play now. Your move!
         res.status(200).send(game);
-
-    // TODO: Update this, it will not work in current state
-    } else if (game.players.indexOf(req.headers.user) > -1) {
-        // Hey, get off! The other player has not finished their move yet!
-        res.status(202).send(game);
     } else {
-        // What are you doing here? You're not a part of this game...
-        res.status(403).send();
+        let found = false;
+        game.players.forEach((element) => {
+            if (element.username === req.headers.user) {
+                // Get that game, but it's still not your move.
+                res.status(202).send(game);
+                found = true;
+            }
+        }, this);
+
+        if (!found) {
+            // What are you doing here? You're not a part of this game...
+            res.status(403).send();
+        }
     }
 });
 
