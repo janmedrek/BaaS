@@ -51,7 +51,7 @@ router.get('/:gameId', async (req, res) => {
 router.put('/:gameId', async (req, res) => {
     const game = gameModule.getGame(req.params.gameId);
 
-    if (game.currentPlayer === req.headers.user) {
+    if (game.players[game.currentPlayer].username === req.headers.user) {
         if (!req.body.state) {
             res.send(400).send('No game state provided');
             return;
