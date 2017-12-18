@@ -33,11 +33,12 @@ const mergeStatistics = async (obj1, obj2) => {
 statisticsModule.getStatistics = async username => datastoreFacade.getStatistics(username);
 
 statisticsModule.saveStatistics = async (username, statistics) => {
-    // TODO:
-    // const result = await mergeStatistics({ lol: 1, lel: 2, lul: 3 }, { lol: 2, lil: 4, lulu: 3 });
-    // console.log(result);
+    const currentStats = await statisticsModule.getStatistics(username);
+
+    const mergedStats = await mergeStatistics(currentStats, statistics);
+
     try {
-        const result = await datastoreFacade.saveStatistics(username, statistics);
+        const result = await datastoreFacade.saveStatistics(username, mergedStats);
         return result;
     } catch (err) {
         throw err;
