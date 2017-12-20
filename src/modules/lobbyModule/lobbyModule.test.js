@@ -306,7 +306,7 @@ describe('Lobby Module', () => {
         let getLobbyStub;
 
         before(() => {
-            getLobbyStub = sinon.stub(lobbyModule, 'getLobby');
+            getLobbyStub = sinon.stub(lobbyModule, 'getLobbyInternal');
         });
 
         beforeEach(() => {

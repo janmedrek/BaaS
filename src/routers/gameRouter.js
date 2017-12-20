@@ -35,15 +35,23 @@ router.get('/:gameId', async (req, res) => {
         return;
     }
 
-    if (game.currentPlayer === req.headers.user) {
+    if (game.players[game.currentPlayer].username === req.headers.user) {
         // Okey, play now. Your move!
         res.status(200).send(game);
-    } else if (game.players.indexOf(req.headers.user) > -1) {
-        // Hey, get off! The other player has not finished their move yet!
-        res.status(202).send(game);
     } else {
-        // What are you doing here? You're not a part of this game...
-        res.status(403).send();
+        let found = false;
+        game.players.forEach((element) => {
+            if (element.username === req.headers.user) {
+                // Get that game, but it's still not your move.
+                res.status(202).send(game);
+                found = true;
+            }
+        }, this);
+
+        if (!found) {
+            // What are you doing here? You're not a part of this game...
+            res.status(403).send();
+        }
     }
 });
 
@@ -51,7 +59,7 @@ router.get('/:gameId', async (req, res) => {
 router.put('/:gameId', async (req, res) => {
     const game = gameModule.getGame(req.params.gameId);
 
-    if (game.currentPlayer === req.headers.user) {
+    if (game.players[game.currentPlayer].username === req.headers.user) {
         if (!req.body.state) {
             res.send(400).send('No game state provided');
             return;

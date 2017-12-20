@@ -25,15 +25,20 @@
     "body-parser": "^1.18.2",
     "connect-timeout": "^1.9.0",
     "express": "^4.16.2",
+    "fs": "0.0.1-security",
+    "helmet": "^3.9.0",
+    "https": "^1.0.0",
+    "jscs": "^3.0.7",
+    "loadtest": "^2.3.0",
     "md5": "^2.2.1",
     "uuid": "^3.1.0"
   },
   "devDependencies": {
-    "eslint": "^4.10.0",
+    "chai": "^4.1.2",
+    "eslint": "^4.12.1",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.8.0",
-    "chai": "^4.1.2",
     "mocha": "^4.0.1",
-    "sinon": "^4.1.2"
+    "sinon": "^4.1.3"
   }
 }

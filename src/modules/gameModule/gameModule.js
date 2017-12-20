@@ -24,7 +24,7 @@ gameModule.createGame = (playersData) => {
 
     const players = playersData.slice();
     game.players = players;
-    game.currentPlayer = players[0].username;
+    game.currentPlayer = 0;
 
     gameModule.memDB.games.push(game);
 
@@ -64,11 +64,11 @@ gameModule.updateGameState = (gameId, state) => {
     game.boardState = state;
 
     // Change current player to the one that is next on the list
-    const index = game.players.indexOf(game.currentPlayer);
+    const index = game.currentPlayer;
     if (index >= 0 && index < game.players.length - 1) {
-        game.currentPlayer = game.players[index + 1].username;
+        game.currentPlayer = index + 1;
     } else {
-        game.currentPlayer = game.players[0].username;
+        game.currentPlayer = 0;
     }
     return game;
 };
