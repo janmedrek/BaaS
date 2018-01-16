@@ -4,5 +4,4 @@
 package-lock.json
 
 node_modules/
-
-src/res/datastoreKey.json
+src/res/
